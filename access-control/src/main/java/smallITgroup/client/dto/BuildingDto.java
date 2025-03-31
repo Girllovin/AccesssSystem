@@ -1,5 +1,7 @@
 package smallITgroup.client.dto;
 
+import java.util.Set;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class BuildingDto {
 	int id;
 	String buildingName;
-	DoorReaderDto[] doors;
+	Set<DoorReaderDto>  doors;
 }
