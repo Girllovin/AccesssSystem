@@ -1,34 +1,34 @@
 package smallITgroup.client.model;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
+
+import java.util.UUID;
 
 @Getter
-@EqualsAndHashCode(of = "UUID")
+@Setter
+@EqualsAndHashCode(of = "uuid")
 public class CardHolder {
 	int Counter;
-	String UUID;
+	UUID uuid;
 	String firstName;
 	String lastName;
 	String company;
 	Map<Integer, Card> cards;
-	ArrayList<String> permissions;
-	public CardHolder(String uUID, String firstName, String lastName, String company) {
+	HashSet<String> permissions;
+	public CardHolder(UUID uuid, String firstName, String lastName, String company) {
 		super();
 		this.Counter = 0;
-		UUID = uUID;
+		this.uuid = uuid;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.company = company;
 		Map<Integer, Card> cards = new HashMap<Integer, Card>();
-		Set<String> permissions = new HashSet<String>();
+		HashSet<String> permissions = new HashSet<String>();
 	}
 	
 	public boolean addCard(Card card) {

@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class CardDto {
-	Integer cardId;
+	int cardId;
 	Boolean isActive;
 	LocalDateTime inactiveDateTime;	
 }

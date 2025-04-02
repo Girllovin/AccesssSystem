@@ -7,11 +7,11 @@ import smallITgroup.client.dto.CardHolderDto;
 
 public interface ClientService {
 	
-	 CardHolderDto geCardHolderById(UUID uuid);
+	 CardHolderDto getCardHolderById(UUID uuid);
 	 
-	 CardHolderDto geCardHolderByName(String firstName, String lastName);
+	 CardHolderDto getCardHolderByName(String firstName, String lastName);
 	 
-	 CardHolderDto geCardHolderByCard(int cardNumber);
+	 CardHolderDto getCardHolderByCard(int cardNumber);
 	 
 	 List<CardHolderDto> cardHolders();
 	 

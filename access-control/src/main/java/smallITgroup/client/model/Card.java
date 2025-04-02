@@ -1,5 +1,6 @@
 package smallITgroup.client.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import lombok.Getter;
@@ -11,9 +12,9 @@ public class Card {
 	@Setter
 	Boolean isActive;
 	@Setter
-	LocalDateTime inactiveDate;
+	LocalDate inactiveDate;
 	
-	public Card(Integer cardId, Boolean isActive, LocalDateTime inactiveDate) {
+	public Card(Integer cardId, Boolean isActive, LocalDate inactiveDate) {
 		super();
 		this.cardId = cardId;
 		this.isActive = isActive;

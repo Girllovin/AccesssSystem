@@ -9,11 +9,11 @@ import smallITgroup.client.model.CardHolder;
 
 public interface ClientRepository {
 	
-	Optional<CardHolderDto> findCardHolderById(UUID uuid);
+	Optional<CardHolder> findCardHolderById(UUID uuid);
 	
-	Optional<CardHolderDto> findCardHolderByName(String firstName, String lastName);
+	Optional<CardHolder> findCardHolderByName(String firstName, String lastName);
 	
-	Optional<CardHolderDto> findCardHolderByCard(Integer cardNumber);
+	Optional<CardHolder> findCardHolderByCard(Integer cardNumber);
 	
 	List<CardHolder> cardHoldersList();
 	
