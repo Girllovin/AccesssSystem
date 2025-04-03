@@ -7,9 +7,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Component;
-import smallITgroup.client.model.CardHolder;
+import org.springframework.stereotype.Repository;
 
-@Component
+import lombok.RequiredArgsConstructor;
+import smallITgroup.client.model.CardHolder;
+import smallITgroup.client.service.ClientService;
+
+@Repository
+@RequiredArgsConstructor
 public class ClientRepositoryImpl implements ClientRepository {
 	Map<UUID, CardHolder> cardholders = new ConcurrentHashMap<>( ); 
 

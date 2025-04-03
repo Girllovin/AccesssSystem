@@ -12,14 +12,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import smallITgroup.client.dto.CardHolderDto;
 import smallITgroup.client.service.ClientService;
 
+@RequiredArgsConstructor
 @RestController
 public class ClientController {
 	
-	@Autowired
-	ClientService clientService;
+	final ClientService clientService;
 
 	@GetMapping("/cardholder/get/{uuid}")
 	public CardHolderDto getCardHolderById(@PathVariable UUID uuid) {

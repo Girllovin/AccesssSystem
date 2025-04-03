@@ -1,19 +1,26 @@
 package smallITgroup.client.model;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.UUID;
 
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(of = "uuid")
-public class CardHolder {
-	int Counter;
+public class CardHolder {	
 	UUID uuid;
 	String firstName;
 	String lastName;
@@ -22,7 +29,6 @@ public class CardHolder {
 	HashSet<String> permissions;
 	public CardHolder(UUID uuid, String firstName, String lastName, String company) {
 		super();
-		this.Counter = 0;
 		this.uuid = uuid;
 		this.firstName = firstName;
 		this.lastName = lastName;

@@ -10,7 +10,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,7 +21,7 @@ public class CardHolderDto {
 	java.util.UUID uuid;
 	String firstName;
 	String lastName;
-	String companyString;
+	String company;
 	Map<Integer, LocalDate> cards;
 	HashSet<String> permissions;
 }

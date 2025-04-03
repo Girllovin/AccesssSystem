@@ -9,22 +9,25 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import smallITgroup.client.dao.ClientRepository;
+import smallITgroup.client.dao.exeptions.CardHolderNotFoundExeption;
 import smallITgroup.client.dto.CardHolderDto;
 import smallITgroup.client.model.Card;
 import smallITgroup.client.model.CardHolder;
 
-@Component
+@Service
+@RequiredArgsConstructor
 public class ClientServiceImpl implements ClientService {
-	
-	@Autowired
-	ClientRepository clientRepository;
+
+	final ClientRepository clientRepository;
 
 	@Override
 	public CardHolderDto getCardHolderById(UUID uuid) {
-		CardHolder cardHolder = clientRepository.findCardHolderById(uuid).orElse(null);
-		return cardHolder == null ? null : new CardHolderDto(cardHolder.getUuid(), cardHolder.getFirstName(), cardHolder.getLastName(), cardHolder.getCompany(), null, null);
+		CardHolder cardHolder = clientRepository.findCardHolderById(uuid).orElseThrow(() -> new CardHolderNotFoundExeption());
+		return new CardHolderDto(cardHolder.getUuid(), cardHolder.getFirstName(), cardHolder.getLastName(), cardHolder.getCompany(), null, null);
 	}
 
 	@Override
@@ -50,12 +53,15 @@ public class ClientServiceImpl implements ClientService {
 //		if (clientRepository.findCardHolderById(cardHolderDto.getUuid()).isPresent()) {
 //			return false;
 //		}
-		CardHolder cardHolder = new CardHolder(cardHolderDto.getUuid(), cardHolderDto.getFirstName(), cardHolderDto.getLastName(), cardHolderDto.getCompanyString());
+		System.out.println((cardHolderDto));
+		CardHolder cardHolder = new CardHolder(cardHolderDto.getUuid(), cardHolderDto.getFirstName(), cardHolderDto.getLastName(), cardHolderDto.getCompany());
 		cardHolder.setCards(cardHolderDto.getCards().entrySet()
 					.stream()
 					.collect(Collectors.toMap(Map.Entry::getKey,  
                 entry -> new Card(entry.getKey(),true,entry.getValue()))));
 		cardHolder.setPermissions(cardHolderDto.getPermissions());
+		
+		System.out.println(cardHolder);
                 
 		clientRepository.addCardHolder(cardHolder);
 		return true;
