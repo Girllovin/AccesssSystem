@@ -15,9 +15,9 @@ public interface ClientService {
 	 
 	 List<CardHolderDto> cardHolders();
 	 
-	 boolean addCardHolder(CardHolderDto cardHolder);
+	 Boolean addCardHolder(CardHolderDto cardHolder);
 	 
-	 boolean changeCardHolder(CardHolderDto cardHolder);
+	 Boolean changeCardHolder(CardHolderDto cardHolder);
 	 
 	 CardHolderDto remooveCardHolder(UUID uuid);
 }

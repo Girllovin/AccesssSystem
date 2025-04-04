@@ -4,11 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +21,7 @@ public class ClientServiceImpl implements ClientService {
 
 	@Override
 	public CardHolderDto getCardHolderById(UUID uuid) {
-		CardHolder cardHolder = clientRepository.findCardHolderById(uuid).orElseThrow(() -> new CardHolderNotFoundExeption());
+		CardHolder cardHolder = clientRepository.findById(uuid).orElseThrow(() -> new CardHolderNotFoundExeption());
 		return new CardHolderDto(cardHolder.getUuid(), cardHolder.getFirstName(), cardHolder.getLastName(), cardHolder.getCompany(), null, null);
 	}
 
@@ -49,7 +44,7 @@ public class ClientServiceImpl implements ClientService {
 	}
 
 	@Override
-	public boolean addCardHolder(CardHolderDto cardHolderDto) {
+	public Boolean addCardHolder(CardHolderDto cardHolderDto) {
 //		if (clientRepository.findCardHolderById(cardHolderDto.getUuid()).isPresent()) {
 //			return false;
 //		}
@@ -63,20 +58,22 @@ public class ClientServiceImpl implements ClientService {
 		
 		System.out.println(cardHolder);
                 
-		clientRepository.addCardHolder(cardHolder);
+		clientRepository.save(cardHolder);
 		return true;
 	}
 
 	@Override
-	public boolean changeCardHolder(CardHolderDto cardHolder) {
+	public Boolean changeCardHolder(CardHolderDto cardHolder) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public CardHolderDto remooveCardHolder(UUID uuid) {
-		// TODO Auto-generated method stub
-		return null;
+		CardHolder cardHolder = clientRepository.findById(uuid).orElseThrow(() -> new CardHolderNotFoundExeption());
+		clientRepository.delete(cardHolder);
+		return new CardHolderDto(cardHolder.getUuid(), cardHolder.getFirstName(), cardHolder.getLastName(), cardHolder.getCompany(), null, null);
+	
 	}
 
 }

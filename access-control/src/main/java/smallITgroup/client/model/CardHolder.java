@@ -14,6 +14,8 @@ import lombok.ToString;
 
 import java.util.UUID;
 
+import org.springframework.data.annotation.Id;
+
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,6 +23,7 @@ import java.util.UUID;
 @Setter
 @EqualsAndHashCode(of = "uuid")
 public class CardHolder {	
+	@Id
 	UUID uuid;
 	String firstName;
 	String lastName;
@@ -28,7 +31,7 @@ public class CardHolder {
 	Map<Integer, Card> cards;
 	HashSet<String> permissions;
 	public CardHolder(UUID uuid, String firstName, String lastName, String company) {
-		super();
+		super();		
 		this.uuid = uuid;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -37,7 +40,7 @@ public class CardHolder {
 		HashSet<String> permissions = new HashSet<String>();
 	}
 	
-	public boolean addCard(Card card) {
+	public Boolean addCard(Card card) {
 		try {
 			if (!cards.containsKey(card.cardId)) {
 			this.cards.put(card.cardId, card);
