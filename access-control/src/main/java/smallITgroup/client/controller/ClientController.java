@@ -27,7 +27,7 @@ public class ClientController {
 	} 
 
 	@GetMapping("/cardholder/getbyname/{firstName}/{lastName}")
-	public CardHolderDto getCardHolderByName(@PathVariable String firstName, String lastName) {
+	public List<CardHolderDto> getCardHolderByName(@PathVariable String firstName, String lastName) {
 		return clientService.getCardHolderByName(firstName, lastName);
 	}
 
@@ -51,8 +51,8 @@ public class ClientController {
 		return clientService.changeCardHolder(cardHolder);
 	}
 
-	@DeleteMapping("/cardholder/remove")
-	public CardHolderDto remooveCardHolder(@RequestBody UUID uuid) {
+	@DeleteMapping("/cardholder/remove/{uuid}")
+	public CardHolderDto remooveCardHolder(@PathVariable UUID uuid) {
 		return clientService.remooveCardHolder(uuid);
 	}
 

@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class EventDto {
-    int doorid;
+    Integer doorid;
+    Integer cardId;
     String cardHolderName;
     String cardStatus;
     String access;

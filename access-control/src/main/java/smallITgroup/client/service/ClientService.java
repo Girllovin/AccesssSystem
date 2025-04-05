@@ -9,7 +9,7 @@ public interface ClientService {
 	
 	 CardHolderDto getCardHolderById(UUID uuid);
 	 
-	 CardHolderDto getCardHolderByName(String firstName, String lastName);
+	 List<CardHolderDto> getCardHolderByName(String firstName, String lastName);
 	 
 	 CardHolderDto getCardHolderByCard(int cardNumber);
 	 

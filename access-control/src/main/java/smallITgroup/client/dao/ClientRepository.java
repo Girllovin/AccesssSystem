@@ -4,13 +4,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import smallITgroup.client.dto.CardHolderDto;
 import smallITgroup.client.model.CardHolder;
 
-public interface ClientRepository extends PagingAndSortingRepository<CardHolder, UUID>{
+public interface ClientRepository extends MongoRepository<CardHolder, UUID>{
+
+	List<CardHolder> findAllByFirstName(String firstName);
 	
 //	Optional<CardHolder> findCardHolderById(UUID uuid);
 //	
