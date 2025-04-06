@@ -11,7 +11,7 @@ import smallITgroup.client.dto.DoorReaderDto;
 @Getter
 @EqualsAndHashCode(of = "id")
 public class Building {
-	int id;
+	Integer id;
 	String buildingName;
 	Set<DoorReader> doors;
 	

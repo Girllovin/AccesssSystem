@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class BuildingDto {
-	int id;
+	Integer id;
 	String buildingName;
 	Set<DoorReaderDto>  doors;
 }

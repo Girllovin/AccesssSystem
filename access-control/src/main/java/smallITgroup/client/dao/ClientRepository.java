@@ -1,26 +1,26 @@
 package smallITgroup.client.dao;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-import smallITgroup.client.dto.CardHolderDto;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import smallITgroup.client.model.CardHolder;
 
-public interface ClientRepository {
+public interface ClientRepository extends MongoRepository<CardHolder, UUID>{
+	List<CardHolder> findByFirstNameAndLastName(String firstName, String lastName);
 	
-	Optional<CardHolder> findCardHolderById(UUID uuid);
-	
-	Optional<CardHolder> findCardHolderByName(String firstName, String lastName);
-	
-	Optional<CardHolder> findCardHolderByCard(Integer cardNumber);
-	
-	List<CardHolder> cardHoldersList();
-	
-	boolean addCardHolder(CardHolder cardHolder);
-	
-	boolean changeCardHolder(CardHolder cardHolder);
-	
-	CardHolder cardHolderRemove(UUID uuid);
+	@Query("{ 'firstName': { $regex: ?0, $options: 'i' } }")
+	List<CardHolder> findByFirstNameIgnoreCase(String firstName);
 
+	@Query("{ 'lastName': { $regex: ?0, $options: 'i' } }")
+	List<CardHolder> findByLastNameIgnoreCase(String lastName);
+	
+	@Query("{ 'firstName': { $regex: :#{#first}, $options: 'i' }, 'lastName': { $regex: :#{#last}, $options: 'i' } }")
+	List<CardHolder> searchByNames(@Param("first") String firstName, @Param("last") String lastName);
+
+
+//  Database access:  gerllovin Accsess123!
 }

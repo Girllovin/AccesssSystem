@@ -8,7 +8,7 @@ import lombok.ToString;
 @ToString
 @Getter
 public class CardDto {
-	int cardId;
+	Integer cardId;
 	Boolean isActive;
 	LocalDateTime inactiveDateTime;	
 }

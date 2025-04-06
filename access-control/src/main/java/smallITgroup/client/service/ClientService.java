@@ -9,15 +9,15 @@ public interface ClientService {
 	
 	 CardHolderDto getCardHolderById(UUID uuid);
 	 
-	 CardHolderDto getCardHolderByName(String firstName, String lastName);
+	 List<CardHolderDto> getCardHolderByName(String firstName, String lastName);
 	 
 	 CardHolderDto getCardHolderByCard(int cardNumber);
 	 
 	 List<CardHolderDto> cardHolders();
 	 
-	 boolean addCardHolder(CardHolderDto cardHolder);
+	 Boolean addCardHolder(CardHolderDto cardHolder);
 	 
-	 boolean changeCardHolder(CardHolderDto cardHolder);
+	 Boolean changeCardHolder(CardHolderDto cardHolder);
 	 
 	 CardHolderDto remooveCardHolder(UUID uuid);
 }
