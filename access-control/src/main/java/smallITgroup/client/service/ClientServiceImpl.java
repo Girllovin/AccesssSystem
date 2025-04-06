@@ -6,7 +6,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
-import jakarta.xml.ws.Holder;
 import lombok.RequiredArgsConstructor;
 import smallITgroup.client.dao.ClientRepository;
 import smallITgroup.client.dao.exeptions.CardHolderNotFoundExeption;
@@ -33,56 +32,26 @@ public class ClientServiceImpl implements ClientService {
 
 	@Override
 	public List<CardHolderDto> getCardHolderByName(String firstName, String lastName) {
-		if ((firstName == null||firstName.isBlank()||firstName.isEmpty())&&(lastName == null||lastName.isBlank()||lastName.isEmpty())) {
-		throw new NameNotCorrectExeption();
-		}
-		if (!(firstName.isBlank()||!firstName.isEmpty())) {
-			return clientRepository
-					.findAll().stream().filter(holder -> holder.getFirstName() == firstName)
-//					.filter(holder -> (holder.getLastName() == null)
-//							||(holder.getLastName() == lastName)
-//							|| (holder.getLastName().isBlank()))
-					.map(holder -> {
-			            CardRecieveDto cards = new CardRecieveDto(
-			                holder.getCards().entrySet().stream()
-			                    .collect(Collectors.toMap(
-			                        Map.Entry::getKey,
-			                        entry -> entry.getValue().getInactiveDate()
-			                    ))
-			            );
 
-			            return new CardHolderDto(
-			                holder.getUuid(),
-			                holder.getFirstName(),
-			                holder.getLastName(),
-			                holder.getCompany(),
-			                cards.getDto(), 
-			                holder.getPermissions()
-			            );
-			        })
-			        .collect(Collectors.toList()); 
-		} else return clientRepository
-				.findAll().stream().filter(holder -> (holder.getLastName() == lastName))						
-				.map(holder -> {
-		            CardRecieveDto cards = new CardRecieveDto(
-		                holder.getCards().entrySet().stream()
-		                    .collect(Collectors.toMap(
-		                        Map.Entry::getKey,
-		                        entry -> entry.getValue().getInactiveDate()
-		                    ))
-		            );
+	    if ((firstName == null || firstName.isBlank()) && (lastName == null || lastName.isBlank())) {
+	        throw new NameNotCorrectExeption();
+	    }
 
-		            return new CardHolderDto(
-		                holder.getUuid(),
-		                holder.getFirstName(),
-		                holder.getLastName(),
-		                holder.getCompany(),
-		                cards.getDto(), 
-		                holder.getPermissions()
-		            );
-		        })
-		        .collect(Collectors.toList()); 
+	    List<CardHolder> matchedCardHolders;
+
+	    if (firstName != null && !firstName.isBlank() && lastName != null && !lastName.isBlank()) {
+	        matchedCardHolders = clientRepository.findByFirstNameAndLastName(firstName, lastName);
+	    } else if (firstName != null && !firstName.isBlank()) {
+	        matchedCardHolders = clientRepository.findByFirstNameIgnoreCase(firstName);
+	    } else {
+	        matchedCardHolders = clientRepository.findByLastNameIgnoreCase(lastName);
+	    }
+
+	    return matchedCardHolders.stream()
+	    		.map(this::convertToDto)
+	            .collect(Collectors.toList());
 	}
+
 
 	@Override
 	public CardHolderDto getCardHolderByCard(int cardNumber) {
@@ -90,39 +59,15 @@ public class ClientServiceImpl implements ClientService {
 			    .filter(holder -> holder.getCards().containsKey(cardNumber))
 			    .findFirst()
 			    .orElseThrow(() -> new CardHolderNotFoundExeption());
-		CardRecieveDto cards = new CardRecieveDto(cardHolder.getCards().entrySet().stream()
-				.collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getInactiveDate())));
-		 return new CardHolderDto(
-	                cardHolder.getUuid(),
-	                cardHolder.getFirstName(),
-	                cardHolder.getLastName(),
-	                cardHolder.getCompany(),
-	                cards.getDto(), 
-	                cardHolder.getPermissions());
+		
+		 return convertToDto(cardHolder);	            
 	}
 	
 	@Override
 	public List<CardHolderDto> cardHolders() {
 	    return clientRepository.findAll().stream()
-	        .map(holder -> {
-	            CardRecieveDto cards = new CardRecieveDto(
-	                holder.getCards().entrySet().stream()
-	                    .collect(Collectors.toMap(
-	                        Map.Entry::getKey,
-	                        entry -> entry.getValue().getInactiveDate()
-	                    ))
-	            );
-
-	            return new CardHolderDto(
-	                holder.getUuid(),
-	                holder.getFirstName(),
-	                holder.getLastName(),
-	                holder.getCompany(),
-	                cards.getDto(), 
-	                holder.getPermissions()
-	            );
-	        })
-	        .collect(Collectors.toList()); 
+	    		.map(this::convertToDto)
+	            .collect(Collectors.toList());
 	}
 
 	@Override
@@ -152,9 +97,6 @@ public class ClientServiceImpl implements ClientService {
 			cardHolder.setCards(cardHolderDto.getCards().entrySet().stream().collect(
 					Collectors.toMap(Map.Entry::getKey, entry -> new Card(entry.getKey(), true, entry.getValue()))));
 			cardHolder.setPermissions(cardHolderDto.getPermissions());
-
-			System.out.println(cardHolder);
-
 			clientRepository.save(cardHolder);
 			return true;
 		} else
@@ -165,8 +107,27 @@ public class ClientServiceImpl implements ClientService {
 	public CardHolderDto remooveCardHolder(UUID uuid) {
 		CardHolder cardHolder = clientRepository.findById(uuid).orElseThrow(() -> new CardHolderNotFoundExeption());
 		clientRepository.delete(cardHolder);
-		return new CardHolderDto(cardHolder.getUuid(), cardHolder.getFirstName(), cardHolder.getLastName(), cardHolder.getCompany(), null, null);
+		return convertToDto(cardHolder);
 	
+	}
+
+	private CardHolderDto convertToDto(CardHolder holder) {
+	    CardRecieveDto cards = new CardRecieveDto(
+	        holder.getCards().entrySet().stream()
+	            .collect(Collectors.toMap(
+	                Map.Entry::getKey,
+	                entry -> entry.getValue().getInactiveDate()
+	            ))
+	    );
+
+	    return new CardHolderDto(
+	        holder.getUuid(),
+	        holder.getFirstName(),
+	        holder.getLastName(),
+	        holder.getCompany(),
+	        cards.getDto(),
+	        holder.getPermissions()
+	    );
 	}
 
 }

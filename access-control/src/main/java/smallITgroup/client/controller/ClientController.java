@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,10 @@ public class ClientController {
 		return clientService.getCardHolderById(uuid);
 	} 
 
-	@GetMapping("/cardholder/getbyname/{firstName}/{lastName}")
-	public List<CardHolderDto> getCardHolderByName(@PathVariable String firstName, String lastName) {
+	@GetMapping("/cardholder/getbyname/")
+	public List<CardHolderDto> getCardHolderByName(@RequestParam String firstName, String lastName) {
+		if(firstName.equals(null)) firstName =" ";
+		if(lastName.equals(null)) lastName =" ";
 		return clientService.getCardHolderByName(firstName, lastName);
 	}
 
