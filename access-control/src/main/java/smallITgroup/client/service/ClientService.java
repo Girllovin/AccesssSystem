@@ -3,6 +3,7 @@ package smallITgroup.client.service;
 import java.util.List;
 import java.util.UUID;
 
+import smallITgroup.building.dto.BuildingDto;
 import smallITgroup.client.dto.CardHolderDto;
 
 public interface ClientService {
@@ -19,5 +20,6 @@ public interface ClientService {
 	 
 	 Boolean changeCardHolder(CardHolderDto cardHolder);
 	 
-	 CardHolderDto remooveCardHolder(UUID uuid);
+	 CardHolderDto remooveCardHolder(UUID uuid);	 
+
 }
