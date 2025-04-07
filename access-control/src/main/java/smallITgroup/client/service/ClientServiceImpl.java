@@ -2,18 +2,23 @@ package smallITgroup.client.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import smallITgroup.building.dto.BuildingDto;
+import smallITgroup.building.model.Building;
 import smallITgroup.client.dao.ClientRepository;
 import smallITgroup.client.dao.exeptions.CardHolderNotFoundExeption;
 import smallITgroup.client.dao.exeptions.NameNotCorrectExeption;
 import smallITgroup.client.dto.CardHolderDto;
 import smallITgroup.client.dto.CardRecieveDto;
+import smallITgroup.client.dto.DoorReaderDto;
 import smallITgroup.client.model.Card;
 import smallITgroup.client.model.CardHolder;
+import smallITgroup.client.model.DoorReader;
 
 @Service
 @RequiredArgsConstructor

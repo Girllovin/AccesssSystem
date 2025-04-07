@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import smallITgroup.building.dto.BuildingDto;
 import smallITgroup.client.dto.CardHolderDto;
 import smallITgroup.client.service.ClientService;
 
@@ -62,5 +63,7 @@ public class ClientController {
 	public CardHolderDto remooveCardHolder(@PathVariable UUID uuid) {
 		return clientService.remooveCardHolder(uuid);
 	}
+	
+
 
 }
