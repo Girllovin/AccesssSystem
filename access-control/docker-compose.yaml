@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+  mongodb: 
+    image: mongo  
+    container_name: mongodbaccess
+    ports:
+      - 27017:27017 
+    command: mongod --noauth
+    environment:
+      MONGO_INITDB_DATABASE: access
+    volumes:
+      - mongoaccess_volume:/data/db 
+  backend:
+    container_name: backendaccess
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_OPTS=-DskipTests
+    ports:
+      - 8080:8080
+    command: ["./mvnw", "spring-boot:run"]
+    environment:
+      SPRING_DATA_MONGODB_URI:  mongodb://mongodbaccess:27017/access
+      TZ: UTC
+    volumes:
+      - .:/opt/app  
+    restart: always
+volumes:
+  mongoaccess_volume: 
