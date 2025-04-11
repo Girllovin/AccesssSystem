@@ -27,3 +27,5 @@ public class ServiceConfiguration {
 		return new BCryptPasswordEncoder();
 	}
 }
+
+
