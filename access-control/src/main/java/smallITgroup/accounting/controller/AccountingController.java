@@ -18,7 +18,7 @@ import smallITgroup.accounting.dto.UserInfoDto;
 import smallITgroup.accounting.dto.UserRegisterDto;
 import smallITgroup.accounting.service.UserAccountService;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequiredArgsConstructor
 public class AccountingController {

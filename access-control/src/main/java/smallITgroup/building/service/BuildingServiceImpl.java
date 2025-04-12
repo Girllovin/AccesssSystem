@@ -7,15 +7,18 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import smallITgroup.building.dao.BuildingRepository;
+import smallITgroup.building.dao.exeption.BuildingNotFoundExeption;
 import smallITgroup.building.dto.BuildingDto;
 import smallITgroup.building.model.Building;
-import smallITgroup.client.model.DoorReader;
+import smallITgroup.door.dto.DoorDto;
+import smallITgroup.door.model.Door;
 
 @Service
 @RequiredArgsConstructor
 public class BuildingServiceImpl implements BuildingService{
 
 	final BuildingRepository buildingRepository;
+
 	
 	@Override
 	public Boolean createBuilding(BuildingDto buildingDto) {
@@ -30,9 +33,9 @@ public class BuildingServiceImpl implements BuildingService{
 		return true;
 	}
 	
-	private Set<DoorReader> transferDoorsData(BuildingDto buildingDto) {		
-		 Set<DoorReader> doorsList = buildingDto.getDoors().stream()
-				.map(door -> new DoorReader(door.getDoorId(), 
+	public static Set<Door> transferDoorsData(BuildingDto buildingDto) {		
+		 Set<Door> doorsList = buildingDto.getDoors().stream()
+				.map(door -> new Door(door.getDoorId(), 
 						door.getDescription(), 
 						door.getIsActive(), 
 						door.getIsOpen(), 
@@ -41,6 +44,12 @@ public class BuildingServiceImpl implements BuildingService{
 		 
 		 return doorsList;
 		
+	}
+
+	@Override
+	public BuildingDto getBuildingById(Integer id) {
+		Building building = buildingRepository.findById(id).orElseThrow(() -> new BuildingNotFoundExeption());
+		return new BuildingDto(building.getId(), building.getBuildingName(), building.getDoors());
 	}
  
 }

@@ -18,9 +18,16 @@ public class AuthorizationConfiguration {
         http.httpBasic(withDefaults());
         http.csrf(csrf -> csrf.disable());
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.authorizeHttpRequests(authorize -> authorize
-        		.requestMatchers("/account/register", "/account/recovery/**")
-        			.permitAll()
+        http
+        .csrf().disable()
+        .cors() 
+        .and()
+        .authorizeHttpRequests()
+            .anyRequest().permitAll();
+        
+//        http.authorizeHttpRequests(authorize -> authorize
+//        		.requestMatchers("/account/register", "/account/recovery/**")
+//        			.permitAll()
 //        		.mvcMatchers("/account/user/{login}/role/{role}")
 //        			.hasRole("ADMINISTRATOR")
 //        		.mvcMatchers(HttpMethod.PUT, "/account/user/{login}")
@@ -35,9 +42,9 @@ public class AuthorizationConfiguration {
 //        			.access("@customSecurity.checkPostAuthor(#id, authentication.name)")
 //        		.mvcMatchers(HttpMethod.DELETE, "/forum/post/{id}")
 //        			.access("@customSecurity.checkPostAuthor(#id, authentication.name) or hasRole('MODERATOR')")
-        		.anyRequest()
-        			.authenticated()
-        );
+//        		.anyRequest()
+//        			.authenticated()
+//        );
 //		
 		return http.build();
 	}
