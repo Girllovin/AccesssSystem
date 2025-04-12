@@ -26,6 +26,5 @@ public class BuildingController {
 	@GetMapping("/building/{id}")
 	public BuildingDto getBuildingById(@PathVariable Integer id) {
 		return buildingService.getBuildingById(id);
-	}
-	
+	}	
 }

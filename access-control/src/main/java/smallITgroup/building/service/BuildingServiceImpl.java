@@ -10,6 +10,7 @@ import smallITgroup.building.dao.BuildingRepository;
 import smallITgroup.building.dao.exeption.BuildingNotFoundExeption;
 import smallITgroup.building.dto.BuildingDto;
 import smallITgroup.building.model.Building;
+import smallITgroup.door.dto.DoorDto;
 import smallITgroup.door.model.Door;
 
 @Service
@@ -32,7 +33,7 @@ public class BuildingServiceImpl implements BuildingService{
 		return true;
 	}
 	
-	private Set<Door> transferDoorsData(BuildingDto buildingDto) {		
+	public static Set<Door> transferDoorsData(BuildingDto buildingDto) {		
 		 Set<Door> doorsList = buildingDto.getDoors().stream()
 				.map(door -> new Door(door.getDoorId(), 
 						door.getDescription(), 
@@ -47,7 +48,6 @@ public class BuildingServiceImpl implements BuildingService{
 
 	@Override
 	public BuildingDto getBuildingById(Integer id) {
-//		id = 1;
 		Building building = buildingRepository.findById(id).orElseThrow(() -> new BuildingNotFoundExeption());
 		return new BuildingDto(building.getId(), building.getBuildingName(), building.getDoors());
 	}

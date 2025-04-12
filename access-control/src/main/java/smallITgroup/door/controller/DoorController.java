@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import smallITgroup.door.dto.CreateDoorRequest;
 import smallITgroup.door.dto.DoorDto;
 import smallITgroup.door.service.DoorService;
 
@@ -18,7 +19,7 @@ public class DoorController {
 	final DoorService doorService;
 	
 	@PostMapping("/door/new")
-	public boolean createDoor(@RequestBody DoorDto door) {
-		return doorService.createDoor(door);
+	public boolean createDoor(@RequestBody CreateDoorRequest request) {
+		return doorService.createDoor(request.getBuildingId(), request.getDoor());
 	}
 }
