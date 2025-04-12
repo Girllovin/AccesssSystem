@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import smallITgroup.client.dto.DoorReaderDto;
+import smallITgroup.door.model.Door;
 
 @Getter
 @Setter
@@ -15,5 +15,5 @@ import smallITgroup.client.dto.DoorReaderDto;
 public class BuildingDto {
 	Integer id;
 	String buildingName;
-	Set<DoorReaderDto>  doors;
+	Set<Door> doors;
 }
