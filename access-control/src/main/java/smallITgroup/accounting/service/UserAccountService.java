@@ -18,7 +18,7 @@ public interface UserAccountService {
 
 	UserDto changeRolesList(String email, String role, boolean isAddRole);
 
-	void changePassword(String email, String newPassword);
+	UserInfoDto changePassword(String email, String newPassword);
 	
 	List<UserInfoDto> getAllUsers();
 	

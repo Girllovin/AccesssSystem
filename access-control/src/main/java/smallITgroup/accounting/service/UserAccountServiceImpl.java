@@ -29,11 +29,9 @@ public class UserAccountServiceImpl implements UserAccountService {
 	
 	@Override
 	public UserDto register(UserRegisterDto userRegisterDto) {
-
 		if (userAccountRepository.existsById(userRegisterDto.getEmail().trim())) {
 			throw new UserExistsException();
-		}
-		
+		}		
 		UserAccount userAccount = modelMapper.map(userRegisterDto, UserAccount.class);
 		String password = passwordEncoder.encode(userRegisterDto.getPassword());
 		userAccount.setPassword(password);
@@ -57,9 +55,12 @@ public class UserAccountServiceImpl implements UserAccountService {
 	}
 
 	@Override
-	public void changePassword(String email, String newPassword) {
-		// TODO Auto-generated method stub
-
+	public UserInfoDto changePassword(String email, String newPassword) {
+		UserAccount userAccount = userAccountRepository.findById(email).orElseThrow(UserNotFoundException::new);
+//		userAccount.setPassword(newPassword);
+		userAccount.setPassword(passwordEncoder.encode(newPassword));
+		userAccountRepository.save(userAccount);
+		return modelMapper.map(userAccount, UserInfoDto.class);
 	}
 
 	@Override
@@ -67,14 +68,15 @@ public class UserAccountServiceImpl implements UserAccountService {
 		List<UserInfoDto> result = new ArrayList<>();
 		userAccountRepository.findAll().stream()
 				.map(u -> modelMapper.map(u, UserInfoDto.class))
-				.forEach(u -> result.add(u));
+				.forEach(u -> result.add(u)); 
 				return result;
 	}
 
 	@Override
 	public void recoveryPassword(String email) {	
 		// TODO generating random password with SecureRandom from Spring Security
-		String passwordNew = "777";
+		String passwordDefault = "We_are_the_champions";
+		String passwordNew = passwordEncoder.encode(passwordDefault);
 		UserAccount userAccount = userAccountRepository.findById(email.trim()).orElse(null);
 		
 		if (userAccount == null) {
@@ -83,7 +85,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 		userAccount.setPassword(passwordNew);
 		userAccountRepository.save(userAccount);
 		System.out.println("User " + email + " exists") ;
-		emailService.sendEmail(email, "New password for AccessControl app", "Your new password is " + passwordNew);
+		emailService.sendEmail(email, "New password for AccessControl app", "Your new password is " + passwordDefault);
 		
 	}
 
