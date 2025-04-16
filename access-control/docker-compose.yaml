@@ -1,5 +1,5 @@
 services:
-  mongodb: 
+  mongodbaccess: 
     image: mongo  
     container_name: mongodbaccess
     ports:
@@ -8,7 +8,9 @@ services:
     environment:
       MONGO_INITDB_DATABASE: access
     volumes:
-      - mongoaccess_volume:/data/db 
+      - mongoaccess_volume:/data/db
+    networks:
+      - app-network 
 
   backend:
     container_name: backendaccess
@@ -29,16 +31,16 @@ services:
     networks:
       - app-network
     depends_on:
-      - mongodb
+      - mongodbaccess
 
-  frontend:
-    build: C:/Users/dbuil/OneDrive/My_Documents/JavaCourseProjects/AccesControlSystem
-    ports:
-      - "3000:3000"
-    networks:
-      - app-network
-    depends_on:
-      - backend
+#  frontend:
+#    build: C:\Users\user\git\AccesControlSystem-d.shtrikman\AccesControlSystem-d.shtrikman
+#   ports:
+#      - "3000:3000"
+#    networks:
+#      - app-network
+#    depends_on:
+#      - backend
 
 volumes:
   mongoaccess_volume:
