@@ -21,10 +21,11 @@ public class AuthorizationConfiguration {
 		http.httpBasic(withDefaults());
 		http.csrf(csrf -> csrf.disable());
 		http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-		http.authorizeHttpRequests(
+		http.cors().and().csrf().disable().authorizeHttpRequests(
 				authorize -> authorize.requestMatchers("/account/register", "/account/recovery/**").permitAll()
 						.anyRequest().authenticated()
 		);
+
 //		.formLogin(withDefaults());
 		return http.build();
 	}
