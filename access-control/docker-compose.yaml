@@ -1,46 +1,34 @@
+version: '3.8'
+
 services:
   mongodbaccess: 
-    image: mongo  
+    image: mongo
     container_name: mongodbaccess
     ports:
-      - 27017:27017 
+      - "27017:27017"
     command: mongod --noauth
     environment:
       MONGO_INITDB_DATABASE: access
     volumes:
       - mongoaccess_volume:/data/db
     networks:
-      - app-network 
+      - app-network
 
   backend:
     container_name: backendaccess
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        - MAVEN_OPTS=-DskipTests
     ports:
-      - 8080:8080
-    command: ["./mvnw", "spring-boot:run"]
+      - "8080:8080"
     environment:
-      SPRING_DATA_MONGODB_URI: mongodb://mongodbaccess:27017/access
-      TZ: UTC
-    volumes:
-      - .:/opt/app  
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodbaccess:27017/access
+      - TZ=UTC
     restart: always
     networks:
       - app-network
     depends_on:
       - mongodbaccess
-
-#  frontend:
-#    build: C:\Users\user\git\AccesControlSystem-d.shtrikman\AccesControlSystem-d.shtrikman
-#   ports:
-#      - "3000:3000"
-#    networks:
-#      - app-network
-#    depends_on:
-#      - backend
 
 volumes:
   mongoaccess_volume:
