@@ -27,9 +27,9 @@ public class Door {
 	public Door(String description) {
 		this.doorId = generateID();
 		this.description = description;
-		isActive = false;
-		isOpen = false;
-		alarm = false;
+		isActive = null;
+		isOpen = null;
+		alarm = null;
 	}
 	
     private synchronized String generateID() {

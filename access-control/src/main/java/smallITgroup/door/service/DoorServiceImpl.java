@@ -25,15 +25,12 @@ public class DoorServiceImpl implements DoorService{
 
 		Building building = buildingRepository.findById(buildingId).orElseThrow(() -> new BuildingNotFoundExeption());
 		
-		// 3. Make sure doors set exists
 	    if (building.getDoors() == null) {
 	        building.setDoors(new HashSet<>());
 	    }
 
-	    // 4. Add the new door to the set
 	    building.getDoors().add(door);
 
-	    // 5. Save the updated building
 	    buildingRepository.save(building);
 		
 		doorRepository.save(door);
