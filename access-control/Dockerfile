@@ -1,5 +1,5 @@
 # ---------- Сборочный этап ----------
-FROM eclipse-temurin:21-jdk as build
+FROM eclipse-temurin:17-jdk as build
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ COPY . ./
 RUN ./mvnw clean package -DskipTests
 
 # ---------- Запусковой этап ----------
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
