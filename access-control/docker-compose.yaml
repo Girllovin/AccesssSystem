@@ -1,18 +1,18 @@
 version: '3.8'
 
 services:
-  mongodbaccess: 
-    image: mongo
-    container_name: mongodbaccess
-    ports:
-      - "27017:27017"
-    command: mongod --noauth
-    environment:
-      MONGO_INITDB_DATABASE: access
-    volumes:
-      - mongoaccess_volume:/data/db
-    networks:
-      - app-network
+#  mongodbaccess: 
+#    image: mongo
+ #   container_name: mongodbaccess
+ #   ports:
+ #     - "27017:27017"
+#    command: mongod --noauth
+#    environment:
+ #     MONGO_INITDB_DATABASE: access
+ #   volumes:
+#      - mongoaccess_volume:/data/db
+#    networks:
+ #     - app-network
 
   backend:
     container_name: backendaccess
@@ -22,16 +22,16 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://mongodbaccess:27017/access
+      - SPRING_DATA_MONGODB_URI==mongodb+srv://gerllovin:Accsess123!@accesscontrol.5dgaioe.mongodb.net/accsessbase?retryWrites=true&w=majority&appName=AccessControl
       - TZ=UTC
     restart: always
     networks:
       - app-network
     depends_on:
-      - mongodbaccess
+#      - mongodbaccess
 
-volumes:
-  mongoaccess_volume:
+#volumes:
+#  mongoaccess_volume:
 
 networks:
   app-network:
