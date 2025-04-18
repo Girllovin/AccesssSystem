@@ -8,7 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import smallITgroup.client.dto.EventDto;
+import smallITgroup.event.dto.EventDto;
 import smallITgroup.event.dao.EventRepository;
 import smallITgroup.event.dto.ResponseDto;
 import smallITgroup.event.model.Event;

@@ -3,7 +3,6 @@ package smallITgroup.accounting.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import smallITgroup.accounting.dto.ChangePasswordDto;
 import smallITgroup.accounting.dto.UserDto;
 import smallITgroup.accounting.dto.UserInfoDto;
 import smallITgroup.accounting.dto.UserRegisterDto;
 import smallITgroup.accounting.service.UserAccountService;
-import smallITgroup.accounting.service.UserAccountServiceImpl;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -36,7 +35,7 @@ public class AccountingController {
 //    }
 	
 	@PostMapping("/account/register")
-	public UserDto register(
+	public UserDto register(@Valid
 			@RequestBody UserRegisterDto userRegisterDto) {
 		System.out.println("Begining of registration");
 		return userAccountService.register(userRegisterDto);

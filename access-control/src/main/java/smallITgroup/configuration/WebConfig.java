@@ -12,6 +12,8 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addMapping("/**")
 				.allowedOrigins("https://accescontrolsystem.onrender.com")
 				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-				.allowedHeaders("*").allowCredentials(true);
+				.allowedHeaders("*")
+				.exposedHeaders("Authorization")
+				.allowCredentials(true);
 	}
 }

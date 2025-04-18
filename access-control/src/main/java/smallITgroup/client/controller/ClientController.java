@@ -34,8 +34,8 @@ public class ClientController {
 
 	@GetMapping("/cardholder/getbyname/")
 	public List<CardHolderDto> getCardHolderByName(@RequestParam String firstName, String lastName) {
-		if(firstName.equals(null)) firstName =" ";
-		if(lastName.equals(null)) lastName =" ";
+		if(firstName == null) firstName =" ";
+		if(lastName == null) lastName =" ";
 		return clientService.getCardHolderByName(firstName, lastName);
 	}
 

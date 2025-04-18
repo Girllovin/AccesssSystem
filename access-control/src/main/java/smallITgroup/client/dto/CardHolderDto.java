@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ public class CardHolderDto {
 	String firstName;
 	String lastName;
 	String company;
+	@NotNull
 	Map<Integer, LocalDate> cards;
 	HashSet<String> permissions;
 }
