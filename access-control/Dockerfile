@@ -1,30 +1,23 @@
-# base image with Java 21 and Alpine Linux
-FROM eclipse-temurin:21-jdk-alpine
+# ---------- Сборочный этап ----------
+FROM eclipse-temurin:17-jdk as build
 
-# install utilities: time zone data, curl, unzip, bash, git
-RUN apk update && \
-    apk upgrade && \
-    apk add --no-cache tzdata curl unzip bash git && \
-    rm -rf /var/cache/apk/*
+WORKDIR /app
 
-# Maven 
-ENV MAVEN_VERSION=3.9.6
-RUN curl -fsSL https://downloads.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz | tar -xz -C /opt/ && \
-    ln -s /opt/apache-maven-${MAVEN_VERSION}/bin/mvn /usr/bin/mvn
+# Копируем wrapper и проект
+COPY .mvn/ .mvn
+COPY mvnw pom.xml ./
+RUN chmod +x mvnw && ./mvnw dependency:go-offline
 
+COPY . ./
 
-# working directory in the container
-WORKDIR /opt/app
+RUN ./mvnw clean package -DskipTests
 
-# caching dependencies
-COPY pom.xml mvnw /opt/app/
-COPY .mvn /opt/app/.mvn
+# ---------- Запусковой этап ----------
+FROM eclipse-temurin:17-jre
 
-# offline mode for dependencies
-RUN ./mvnw dependency:go-offline
+WORKDIR /app
 
-# project into the container
-COPY . /opt/app
+COPY --from=build /app/target/*.jar app.jar
 
-# default command: run 
-CMD ["./mvnw", "spring-boot:run"]
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
