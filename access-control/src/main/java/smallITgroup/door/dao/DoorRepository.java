@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import smallITgroup.door.model.Door;
 
-@Repository
-public interface DoorRepository extends MongoRepository<Door, String>{
-
+@Repository // Marks this interface as a Spring Data repository
+public interface DoorRepository extends MongoRepository<Door, String> {
+    // Inherits CRUD and query methods for Door entities with String as the ID type
 }

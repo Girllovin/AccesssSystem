@@ -10,23 +10,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@ControllerAdvice
+@ControllerAdvice // Indicates that this class will handle global exceptions across controllers
 public class GlobalExceptionHandler {
 
-	 @ExceptionHandler(MethodArgumentNotValidException.class)
-	    public ResponseEntity<Map<String, String>> handleValidationError(MethodArgumentNotValidException ex) {
-	        String errorMessage = ex.getBindingResult()
-	            .getFieldErrors()
-	            .stream()
-	            .map(error -> error.getField() + ": " + error.getDefaultMessage())
-	            .collect(Collectors.joining("; "));
+    // This method handles validation errors when invalid method arguments are passed
+    @ExceptionHandler(MethodArgumentNotValidException.class) 
+    public ResponseEntity<Map<String, String>> handleValidationError(MethodArgumentNotValidException ex) {
+        
+        // Extracting the error messages from the validation exception and formatting them
+        String errorMessage = ex.getBindingResult()
+            .getFieldErrors() // Retrieves all field errors
+            .stream()
+            .map(error -> error.getField() + ": " + error.getDefaultMessage()) // Formats error message as "field: message"
+            .collect(Collectors.joining("; ")); // Joins the errors with a semicolon separator
 
-	        Map<String, String> response = new HashMap<>();
-	        response.put("error", errorMessage);
+        // Creating a response map to send back the error message
+        Map<String, String> response = new HashMap<>();
+        response.put("error", errorMessage); // Putting the error message into the map
 
-	        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        // Returning the response with a BAD_REQUEST status
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    
     // @ExceptionHandler(UserNotFoundException.class)
 }

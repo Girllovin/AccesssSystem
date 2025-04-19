@@ -4,15 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,45 +19,41 @@ import smallITgroup.accounting.service.UserAccountService;
 @RequiredArgsConstructor
 public class AccountingController {
 
-//    private final UserAccountServiceImpl userAccountServiceImpl;
-	final UserAccountService userAccountService;
+    // Injected service for user account operations
+    final UserAccountService userAccountService;
 
-//    AccountingController(UserAccountServiceImpl userAccountServiceImpl) {
-//        this.userAccountServiceImpl = userAccountServiceImpl;
-//    }
-	
-	@PostMapping("/account/register")
-	public UserDto register(@Valid
-			@RequestBody UserRegisterDto userRegisterDto) {
-		System.out.println("Begining of registration");
-		return userAccountService.register(userRegisterDto);
-		
-	}
-	
-	@DeleteMapping("/account/user/{email}")
-	public UserDto removeUser(@PathVariable String email) {
-		return userAccountService.removeUser(email);
-	}
-	
-	@PreAuthorize("#email == authentication.name")
-	@PutMapping("/account/user/{email}/password")
-	public UserInfoDto changePassword(
-	        @PathVariable String email,
-	        @RequestBody ChangePasswordDto changePasswordDto) {
-		return userAccountService.changePassword(email, changePasswordDto.getNewPassword());
-	}
-	
-	@GetMapping("/account/users")
-	public List<UserInfoDto> getAllUsers() {
-		return userAccountService.getAllUsers();
-	}
-	
-	@GetMapping("/account/recovery/{email}")
-	@ResponseStatus(HttpStatus.ACCEPTED)
-	public void getRecovery(@PathVariable String email) {
-		System.out.println("we are here");
-		userAccountService.recoveryPassword(email);
-	}
+    // Endpoint to register a new user
+    @PostMapping("/account/register")
+    public UserDto register(@Valid @RequestBody UserRegisterDto userRegisterDto) {
+        System.out.println("Begining of registration");
+        return userAccountService.register(userRegisterDto);
+    }
 
+    // Endpoint to delete a user by email
+    @DeleteMapping("/account/user/{email}")
+    public UserDto removeUser(@PathVariable String email) {
+        return userAccountService.removeUser(email);
+    }
 
+    // Endpoint to change password, allowed only if the email matches the authenticated user
+    @PreAuthorize("#email == authentication.name")
+    @PutMapping("/account/user/{email}/password")
+    public UserInfoDto changePassword(
+            @PathVariable String email,
+            @RequestBody ChangePasswordDto changePasswordDto) {
+        return userAccountService.changePassword(email, changePasswordDto.getNewPassword());
+    }
+
+    // Endpoint to get the list of all users
+    @GetMapping("/account/users")
+    public List<UserInfoDto> getAllUsers() {
+        return userAccountService.getAllUsers();
+    }
+
+    // Endpoint to trigger password recovery process
+    @GetMapping("/account/recovery/{email}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void getRecovery(@PathVariable String email) {
+        userAccountService.recoveryPassword(email);
+    }
 }

@@ -1,8 +1,14 @@
 package smallITgroup.event.dao;
-import smallITgroup.event.model.*;
 
+import smallITgroup.event.model.Event;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface EventRepository extends MongoRepository <Event, Long> {
+// This interface extends MongoRepository to provide CRUD operations for the Event entity
+// MongoRepository is a Spring Data interface that simplifies interactions with MongoDB
+public interface EventRepository extends MongoRepository<Event, Long> {
+
+    // In this case, EventRepository will automatically have all the methods of MongoRepository,
+    // such as save(), findAll(), findById(), delete(), etc. for the Event entity.
+    // You can also define custom query methods if needed (e.g., findByEventName(String name)).
 
 }
