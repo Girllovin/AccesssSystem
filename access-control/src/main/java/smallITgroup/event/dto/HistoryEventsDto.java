@@ -1,4 +1,4 @@
-package smallITgroup.client.dto;
+package smallITgroup.event.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

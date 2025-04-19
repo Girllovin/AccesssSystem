@@ -3,6 +3,7 @@ package smallITgroup.event.service;
 import java.time.LocalDate;
 import java.util.Map;
 
+import smallITgroup.event.dto.ActivityDto;
 import smallITgroup.event.dto.EventDto;
 import smallITgroup.event.dto.ResponseDto;
 
@@ -18,5 +19,8 @@ public interface EventService {
     Map<Long, EventDto> getHistoryByDay(LocalDate date);
     
     // Saves a new event and returns a response indicating success or failure
-    ResponseDto saveNewEvent();
+    ResponseDto saveNewEvent(ActivityDto activityDto);
+
+    // Retrieves all events
+	Map<Long, EventDto> getAllEvents();
 }
