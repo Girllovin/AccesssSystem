@@ -57,4 +57,10 @@ public class AccountingController {
     public void getRecovery(@PathVariable String email) {
         userAccountService.recoveryPassword(email);
     }
+    
+    // Endpoint to get the list of all users email
+    @GetMapping("/account/users/email")
+    public List<String> getUsersEmail() {
+        return userAccountService.getUsersEmail();
+    }
 }
