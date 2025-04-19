@@ -24,14 +24,14 @@ public class Building {
 	
 	private static int idCounter = 0;
 	
-	public Building(int id, String buildingName) {
+	public Building(Integer id, String buildingName) {
 		this.id = 1;
 		this.buildingName = buildingName;
 		@SuppressWarnings("unused")
 		Set<Door> doors = new HashSet<Door>();
 	}
 	
-//	private synchronized int generateId() {
+//	private synchronized Integer generateId() {
 //        return ++idCounter;
 //    }
 

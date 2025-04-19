@@ -2,137 +2,155 @@ package smallITgroup.client.service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import smallITgroup.building.dto.BuildingDto;
-import smallITgroup.building.model.Building;
 import smallITgroup.client.dao.ClientRepository;
 import smallITgroup.client.dao.exeptions.CardHolderNotFoundExeption;
 import smallITgroup.client.dao.exeptions.NameNotCorrectExeption;
 import smallITgroup.client.dto.CardHolderDto;
 import smallITgroup.client.dto.CardRecieveDto;
-import smallITgroup.client.dto.DoorReaderDto;
 import smallITgroup.client.model.Card;
 import smallITgroup.client.model.CardHolder;
-import smallITgroup.client.model.DoorReader;
 
-@Service
-@RequiredArgsConstructor
+@Service // Marks this class as a Spring Service component
+@RequiredArgsConstructor // Automatically injects required dependencies via constructor
 public class ClientServiceImpl implements ClientService {
 
-	final ClientRepository clientRepository;
+    final ClientRepository clientRepository; // Injecting the ClientRepository for database operations
 
-	@Override
-	public CardHolderDto getCardHolderById(UUID uuid) {
-		CardHolder cardHolder = clientRepository.findById(uuid).orElseThrow(() -> new CardHolderNotFoundExeption());
-		CardRecieveDto cards = new CardRecieveDto(cardHolder.getCards().entrySet().stream()
-				.collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getInactiveDate())));
-		return new CardHolderDto(cardHolder.getUuid(), cardHolder.getFirstName(), cardHolder.getLastName(),
-				cardHolder.getCompany(), cards.getDto(), cardHolder.getPermissions());
-	}
+    // Get a CardHolder by UUID
+    @Override
+    public CardHolderDto getCardHolderById(UUID uuid) {
+        // Fetch the CardHolder from the repository or throw exception if not found
+        CardHolder cardHolder = clientRepository.findById(uuid).orElseThrow(() -> new CardHolderNotFoundExeption());
 
-	@Override
-	public List<CardHolderDto> getCardHolderByName(String firstName, String lastName) {
+        // Mapping CardHolder's card information to CardRecieveDto
+        CardRecieveDto cards = new CardRecieveDto(cardHolder.getCards().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getInactiveDate())));
 
-	    if ((firstName == null || firstName.isBlank()) && (lastName == null || lastName.isBlank())) {
-	        throw new NameNotCorrectExeption();
-	    }
+        // Return a CardHolderDto with necessary details
+        return new CardHolderDto(cardHolder.getUuid(), cardHolder.getFirstName(), cardHolder.getLastName(),
+                cardHolder.getCompany(), cards.getDto(), cardHolder.getPermissions());
+    }
 
-	    List<CardHolder> matchedCardHolders;
+    // Get a list of CardHolders by their first and last names
+    @Override
+    public List<CardHolderDto> getCardHolderByName(String firstName, String lastName) {
+        // Validate that at least one of the names is provided
+        if ((firstName == null || firstName.isBlank()) && (lastName == null || lastName.isBlank())) {
+            throw new NameNotCorrectExeption(); // Throw exception if no valid name is provided
+        }
 
-	    if (firstName != null && !firstName.isBlank() && lastName != null && !lastName.isBlank()) {
-	        matchedCardHolders = clientRepository.findByFirstNameAndLastName(firstName, lastName);
-	    } else if (firstName != null && !firstName.isBlank()) {
-	        matchedCardHolders = clientRepository.findByFirstNameIgnoreCase(firstName);
-	    } else {
-	        matchedCardHolders = clientRepository.findByLastNameIgnoreCase(lastName);
-	    }
+        List<CardHolder> matchedCardHolders;
 
-	    return matchedCardHolders.stream()
-	    		.map(this::convertToDto)
-	            .collect(Collectors.toList());
-	}
+        // Find cardholders based on first and last name
+        if (firstName != null && !firstName.isBlank() && lastName != null && !lastName.isBlank()) {
+            matchedCardHolders = clientRepository.findByFirstNameAndLastName(firstName, lastName);
+        } else if (firstName != null && !firstName.isBlank()) {
+            matchedCardHolders = clientRepository.findByFirstNameIgnoreCase(firstName);
+        } else {
+            matchedCardHolders = clientRepository.findByLastNameIgnoreCase(lastName);
+        }
 
+        // Map CardHolders to CardHolderDto and return as list
+        return matchedCardHolders.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
 
-	@Override
-	public CardHolderDto getCardHolderByCard(int cardNumber) {
-		CardHolder cardHolder = clientRepository.findAll().stream()
-			    .filter(holder -> holder.getCards().containsKey(cardNumber))
-			    .findFirst()
-			    .orElseThrow(() -> new CardHolderNotFoundExeption());
-		
-		 return convertToDto(cardHolder);	            
-	}
-	
-	@Override
-	public List<CardHolderDto> cardHolders() {
-	    return clientRepository.findAll().stream()
-	    		.map(this::convertToDto)
-	            .collect(Collectors.toList());
-	}
+    // Get a CardHolder by card number
+    @Override
+    public CardHolderDto getCardHolderByCard(int cardNumber) {
+        // Find the first cardholder that contains the specified card number
+        CardHolder cardHolder = clientRepository.findAll().stream()
+                .filter(holder -> holder.getCards().containsKey(cardNumber))
+                .findFirst()
+                .orElseThrow(() -> new CardHolderNotFoundExeption());
 
-	@Override
-	public Boolean addCardHolder(CardHolderDto cardHolderDto) {
-		if (clientRepository.findById(cardHolderDto.getUuid()).isPresent()) {
-			return false;
-		}
-		System.out.println((cardHolderDto));
-		CardHolder cardHolder = new CardHolder(cardHolderDto.getUuid(), cardHolderDto.getFirstName(), cardHolderDto.getLastName(), cardHolderDto.getCompany());
-		cardHolder.setCards(cardHolderDto.getCards().entrySet()
-					.stream()
-					.collect(Collectors.toMap(Map.Entry::getKey,  
-                entry -> new Card(entry.getKey(),true,entry.getValue()))));
-		cardHolder.setPermissions(cardHolderDto.getPermissions());
-		
-		System.out.println(cardHolder);
-                
-		clientRepository.save(cardHolder);
-		return true;
-	}
+        // Return the found CardHolder as CardHolderDto
+        return convertToDto(cardHolder);
+    }
 
-	@Override
-	public Boolean changeCardHolder(CardHolderDto cardHolderDto) {
-		if (clientRepository.existsById(cardHolderDto.getUuid())) {
-			CardHolder cardHolder = new CardHolder(cardHolderDto.getUuid(), cardHolderDto.getFirstName(),
-					cardHolderDto.getLastName(), cardHolderDto.getCompany());
-			cardHolder.setCards(cardHolderDto.getCards().entrySet().stream().collect(
-					Collectors.toMap(Map.Entry::getKey, entry -> new Card(entry.getKey(), true, entry.getValue()))));
-			cardHolder.setPermissions(cardHolderDto.getPermissions());
-			clientRepository.save(cardHolder);
-			return true;
-		} else
-			throw new CardHolderNotFoundExeption();
-	}
+    // Get a list of all CardHolders
+    @Override
+    public List<CardHolderDto> cardHolders() {
+        // Map all CardHolders to CardHolderDto and return as list
+        return clientRepository.findAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
 
-	@Override
-	public CardHolderDto remooveCardHolder(UUID uuid) {
-		CardHolder cardHolder = clientRepository.findById(uuid).orElseThrow(() -> new CardHolderNotFoundExeption());
-		clientRepository.delete(cardHolder);
-		return convertToDto(cardHolder);
-	
-	}
+    // Add a new CardHolder
+    @Override
+    public Boolean addCardHolder(CardHolderDto cardHolderDto) {
+        // Check if a CardHolder with the same UUID already exists
+        if (clientRepository.findById(cardHolderDto.getUuid()).isPresent()) {
+            return false; // Return false if a CardHolder already exists with this UUID
+        }
 
-	private CardHolderDto convertToDto(CardHolder holder) {
-	    CardRecieveDto cards = new CardRecieveDto(
-	        holder.getCards().entrySet().stream()
-	            .collect(Collectors.toMap(
-	                Map.Entry::getKey,
-	                entry -> entry.getValue().getInactiveDate()
-	            ))
-	    );
+        // Create a new CardHolder and map data from the DTO
+        CardHolder cardHolder = new CardHolder(cardHolderDto.getUuid(), cardHolderDto.getFirstName(),
+                cardHolderDto.getLastName(), cardHolderDto.getCompany());
+        cardHolder.setCards(cardHolderDto.getCards().entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> new Card(entry.getKey(), true, entry.getValue()))));
+        cardHolder.setPermissions(cardHolderDto.getPermissions());
 
-	    return new CardHolderDto(
-	        holder.getUuid(),
-	        holder.getFirstName(),
-	        holder.getLastName(),
-	        holder.getCompany(),
-	        cards.getDto(),
-	        holder.getPermissions()
-	    );
-	}
+        // Save the new CardHolder in the repository
+        clientRepository.save(cardHolder);
+        return true;
+    }
 
+    // Change an existing CardHolder's data
+    @Override
+    public Boolean changeCardHolder(CardHolderDto cardHolderDto) {
+        // Check if a CardHolder with the given UUID exists
+        if (clientRepository.existsById(cardHolderDto.getUuid())) {
+            // Update the CardHolder with new details
+            CardHolder cardHolder = new CardHolder(cardHolderDto.getUuid(), cardHolderDto.getFirstName(),
+                    cardHolderDto.getLastName(), cardHolderDto.getCompany());
+            cardHolder.setCards(cardHolderDto.getCards().entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> new Card(entry.getKey(), true, entry.getValue()))));
+            cardHolder.setPermissions(cardHolderDto.getPermissions());
+
+            // Save the updated CardHolder
+            clientRepository.save(cardHolder);
+            return true;
+        } else {
+            throw new CardHolderNotFoundExeption(); // Throw exception if CardHolder not found
+        }
+    }
+
+    // Remove a CardHolder by UUID
+    @Override
+    public CardHolderDto remooveCardHolder(UUID uuid) {
+        // Fetch the CardHolder and delete it from the repository
+        CardHolder cardHolder = clientRepository.findById(uuid).orElseThrow(() -> new CardHolderNotFoundExeption());
+        clientRepository.delete(cardHolder);
+
+        // Return the removed CardHolder as CardHolderDto
+        return convertToDto(cardHolder);
+    }
+
+    // Convert a CardHolder object to CardHolderDto
+    private CardHolderDto convertToDto(CardHolder holder) {
+        // Map CardHolder's card information to CardRecieveDto
+        CardRecieveDto cards = new CardRecieveDto(
+            holder.getCards().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getInactiveDate()))
+        );
+
+        // Return a new CardHolderDto with the mapped data
+        return new CardHolderDto(
+            holder.getUuid(),
+            holder.getFirstName(),
+            holder.getLastName(),
+            holder.getCompany(),
+            cards.getDto(),
+            holder.getPermissions()
+        );
+    }
 }

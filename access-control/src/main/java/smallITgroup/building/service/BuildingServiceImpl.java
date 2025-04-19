@@ -7,55 +7,58 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import smallITgroup.building.dao.BuildingRepository;
-import smallITgroup.building.dao.exeption.BuildingNotFoundExeption;
-import smallITgroup.building.dto.BuildingDto;
-import smallITgroup.building.model.Building;
+
+import smallITgroup.building.dao.BuildingRepository; // Importing the Building repository to interact with the database
+import smallITgroup.building.dao.exeption.BuildingNotFoundExeption; // Importing the exception for when building is not found
+import smallITgroup.building.dto.BuildingDto; // Importing the BuildingDto for building data transfer
+import smallITgroup.building.model.Building; // Importing the Building entity class
+import smallITgroup.door.model.Door; // Importing the Door model to manage door information
 import smallITgroup.door.dao.DoorRepository;
 import smallITgroup.door.dto.DoorDto;
-import smallITgroup.door.model.Door;
 
 @Service
-@RequiredArgsConstructor
-public class BuildingServiceImpl implements BuildingService{
+@RequiredArgsConstructor // Lombok annotation for constructor-based dependency injection
+public class BuildingServiceImpl implements BuildingService {
 
-	final BuildingRepository buildingRepository;
+    final BuildingRepository buildingRepository; // Injecting BuildingRepository to interact with database
+    final DoorRepository doorRepository;
+    @Override
+    public Boolean createBuilding(BuildingDto buildingDto) {
+        doorRepository.deleteAll();
+        // Creating a new Building object from the provided DTO
+        Building building = new Building(buildingDto.getId(), buildingDto.getBuildingName());
+        
+        // Transferring door data from DTO and setting it to the building
+        building.setDoors(transferDoorsData(buildingDto));
+        
+        // Saving the new building to the repository (database)
+        buildingRepository.save(building);
+        
+        System.out.println(building); // Printing the building to console for debugging
+        
+        return true; // Returning true to indicate the building creation was successful
+    }
+    
+    // Helper method to transfer door data from BuildingDto to Set<Door> for the Building entity
+    public static Set<Door> transferDoorsData(BuildingDto buildingDto) {        
+         Set<Door> doorsList = buildingDto.getDoors().stream()
+             .map(door -> new Door(door.getDoorId(), 
+                     door.getDescription(), 
+                     door.getIsActive(), 
+                     door.getIsOpen(), 
+                     door.getAlarm())) // Mapping each DoorDto to a Door entity
+             .collect(Collectors.toSet()); // Collecting the doors into a Set
+         
+         return doorsList; // Returning the list of doors
+    }
 
-	@Autowired
-    private DoorRepository doorRepository;
-	
-	@Override
-	public Boolean createBuilding(BuildingDto buildingDto) {
-		doorRepository.deleteAll();
-		
-		Building building = new Building(buildingDto.getId(), buildingDto.getBuildingName());
-		
-		building.setDoors(transferDoorsData(buildingDto));
-		
-		buildingRepository.save(building);
-		
-		System.out.println(building);
-		
-		return true;
-	}
-	
-	public static Set<Door> transferDoorsData(BuildingDto buildingDto) {		
-		 Set<Door> doorsList = buildingDto.getDoors().stream()
-				.map(door -> new Door(door.getDoorId(), 
-						door.getDescription(), 
-						door.getIsActive(), 
-						door.getIsOpen(), 
-						door.getAlarm()))
-				.collect(Collectors.toSet());
-		 
-		 return doorsList;
-		
-	}
+    @Override
+    public BuildingDto getBuildingById(Integer id) {
+        // Fetching the building by its ID from the repository
+        Building building = buildingRepository.findById(id).orElseThrow(() -> new BuildingNotFoundExeption());
+        
+        // Returning the BuildingDto with the building data
+        return new BuildingDto(building.getId(), building.getBuildingName(), building.getDoors());
+    }
 
-	@Override
-	public BuildingDto getBuildingById(Integer id) {
-		Building building = buildingRepository.findById(id).orElseThrow(() -> new BuildingNotFoundExeption());
-		return new BuildingDto(building.getId(), building.getBuildingName(), building.getDoors());
-	}
- 
 }
