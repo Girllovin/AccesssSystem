@@ -51,11 +51,6 @@ public class AccountingController {
         return userAccountService.getAllUsers();
     }
 
-  	@GetMapping("/account/users")
-	public List<UserInfoDto> getAllUsers() {
-		return userAccountService.getAllUsers();
-	}
-
     // Endpoint to trigger password recovery process
     @GetMapping("/account/recovery/{email}")
     @ResponseStatus(HttpStatus.ACCEPTED)

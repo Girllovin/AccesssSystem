@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import smallITgroup.client.dto.CardHolderDto;
 import smallITgroup.door.dto.CreateDoorRequest;
+import smallITgroup.door.dto.DoorDto;
 import smallITgroup.door.service.DoorService;
 
 @RequiredArgsConstructor // Generates a constructor with required (final) fields
