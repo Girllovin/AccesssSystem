@@ -5,5 +5,7 @@ import smallITgroup.door.dto.DoorDto;
 public interface DoorService {
 
 	Boolean createDoor(Integer buildingId, DoorDto doorDto);
+	
+	DoorDto removeDoor (String doorId);
 
 }

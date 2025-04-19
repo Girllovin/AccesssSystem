@@ -22,6 +22,8 @@ public interface UserAccountService {
 	
 	List<UserInfoDto> getAllUsers();
 	
+	List<String> getUsersEmail();
+	
 	void recoveryPassword(String email);
 
 }

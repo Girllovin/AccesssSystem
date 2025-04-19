@@ -2,6 +2,7 @@ package smallITgroup.accounting.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -70,6 +71,13 @@ public class UserAccountServiceImpl implements UserAccountService {
 				.map(u -> modelMapper.map(u, UserInfoDto.class))
 				.forEach(u -> result.add(u)); 
 				return result;
+	}
+	
+	@Override
+	public List<String> getUsersEmail() {
+		  return userAccountRepository.findAll().stream()
+		            .map(UserAccount::getEmail)
+		            .collect(Collectors.toList());
 	}
 
 	@Override

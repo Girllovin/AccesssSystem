@@ -61,6 +61,11 @@ public class AccountingController {
 		return userAccountService.getAllUsers();
 	}
 	
+	@GetMapping("/account/users/email")
+	public List<String> getUsersEmail() {
+		return userAccountService.getUsersEmail();
+	}
+	
 	@GetMapping("/account/recovery/{email}")
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public void getRecovery(@PathVariable String email) {
