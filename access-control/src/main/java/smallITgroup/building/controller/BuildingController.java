@@ -1,5 +1,7 @@
 package smallITgroup.building.controller;
 
+
+import smallITgroup.door.service.DoorSyncService;
 import org.springframework.web.bind.annotation.CrossOrigin; // For handling cross-origin requests
 import org.springframework.web.bind.annotation.GetMapping; // To handle GET requests
 import org.springframework.web.bind.annotation.PathVariable; // For path variables in URLs
@@ -25,13 +27,16 @@ public class BuildingController {
 	public boolean addCardHolder(@RequestBody BuildingDto building) {
 		// Calls the service method to create a new building
 		return buildingService.createBuilding(building);
-	}
-	
+  }
+    @Autowired
+    private DoorSyncService syncService;
 	// GET endpoint to retrieve a building by its ID
 	// Path variable 'id' is used to get the building's ID from the URL
 	@GetMapping("/building/{id}")
 	public BuildingDto getBuildingById(@PathVariable Integer id) {
 		// Calls the service method to get building details by ID
+
+    syncService.syncDoorsToBuilding(1);
 		return buildingService.getBuildingById(id);
 	}	
 }

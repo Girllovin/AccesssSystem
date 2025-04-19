@@ -2,6 +2,7 @@ package smallITgroup.accounting.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +23,7 @@ enum Roles {
 @Service
 @RequiredArgsConstructor
 public class UserAccountServiceImpl implements UserAccountService {
+
 
     final UserAccountRepository userAccountRepository;
     final ModelMapper modelMapper;
@@ -137,4 +139,10 @@ public class UserAccountServiceImpl implements UserAccountService {
         userAccountRepository.save(userAccount);
         return modelMapper.map(userAccount, UserDto.class);
     }
+    @Override
+	public List<String> getUsersEmail() {
+		  return userAccountRepository.findAll().stream()
+		            .map(UserAccount::getEmail)
+		            .collect(Collectors.toList());
+	}
 }

@@ -8,6 +8,7 @@ import smallITgroup.accounting.dto.UserInfoDto;    // DTO for user info (includi
 
 public interface UserAccountService {
 
+
     // Method to register a new user with the provided registration details.
     // The method returns a UserDto containing the registered user's details.
     UserDto register(UserRegisterDto userRegisterDto);
@@ -37,4 +38,7 @@ public interface UserAccountService {
     // Method to initiate a password recovery for a user.
     // It takes the user's email and sends a recovery email with a new password.
     void recoveryPassword(String email);
+  
+  	List<String> getUsersEmail();
+
 }

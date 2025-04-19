@@ -29,9 +29,9 @@ public class Door {
 	public Door(String description) {
 		this.doorId = generateID(); // Auto-generates a unique ID
 		this.description = description;
-		isActive = false;
-		isOpen = false;
-		alarm = false;
+		isActive = null;
+		isOpen = null;
+		alarm = null;
 	}
 
 	// Generates a random ID in format: Letter + 3-digit number (e.g., B123)

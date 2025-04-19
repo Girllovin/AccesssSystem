@@ -3,23 +3,28 @@ package smallITgroup.building.service;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+
 import smallITgroup.building.dao.BuildingRepository; // Importing the Building repository to interact with the database
 import smallITgroup.building.dao.exeption.BuildingNotFoundExeption; // Importing the exception for when building is not found
 import smallITgroup.building.dto.BuildingDto; // Importing the BuildingDto for building data transfer
 import smallITgroup.building.model.Building; // Importing the Building entity class
 import smallITgroup.door.model.Door; // Importing the Door model to manage door information
+import smallITgroup.door.dao.DoorRepository;
+import smallITgroup.door.dto.DoorDto;
 
 @Service
 @RequiredArgsConstructor // Lombok annotation for constructor-based dependency injection
 public class BuildingServiceImpl implements BuildingService {
 
     final BuildingRepository buildingRepository; // Injecting BuildingRepository to interact with database
-
+    final DoorRepository doorRepository;
     @Override
     public Boolean createBuilding(BuildingDto buildingDto) {
+        doorRepository.deleteAll();
         // Creating a new Building object from the provided DTO
         Building building = new Building(buildingDto.getId(), buildingDto.getBuildingName());
         

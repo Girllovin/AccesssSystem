@@ -19,6 +19,7 @@ import smallITgroup.accounting.service.UserAccountService;
 @RequiredArgsConstructor
 public class AccountingController {
 
+
     // Injected service for user account operations
     final UserAccountService userAccountService;
 
@@ -49,6 +50,11 @@ public class AccountingController {
     public List<UserInfoDto> getAllUsers() {
         return userAccountService.getAllUsers();
     }
+
+  	@GetMapping("/account/users")
+	public List<UserInfoDto> getAllUsers() {
+		return userAccountService.getAllUsers();
+	}
 
     // Endpoint to trigger password recovery process
     @GetMapping("/account/recovery/{email}")
