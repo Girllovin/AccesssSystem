@@ -4,10 +4,12 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -25,16 +27,19 @@ import smallITgroup.event.model.Event;
 @Service // Marks this class as a service to be managed by Spring
 @RequiredArgsConstructor // Generates a constructor with required (final) fields
 public class EventServiceImpl implements EventService {
-    
+
+    private static final Logger log = LoggerFactory.getLogger(EventServiceImpl.class);
+
     final EventRepository eventRepository;    // Repository for accessing event data
     final DoorRepository doorRepository;      // Repository for accessing door data
     final ModelMapper modelMapper;            // ModelMapper to convert between Event and EventDto
-    final ClientServiceImpl clientServiceImpl;// ClientServis for operations with card holders 
-    static private long eventCounter = 0;
-    
+    final ClientServiceImpl clientServiceImpl;// ClientService for operations with card holders 
+    private static final AtomicLong eventCounter = new AtomicLong(0); // Atomic counter for generating unique event IDs
+
+
     @Override
     public Map<Long, EventDto> getNewEvents() {
-        // Retrieve all events where the 'newEvents' flag is true
+        log.info("Retrieving new events with flag 'newEvents=true'");
         List<Event> newEvents = eventRepository.findByNewEventsTrue();
 
         // Convert the list of new Event objects into a Map of EventDto,
@@ -50,14 +55,14 @@ public class EventServiceImpl implements EventService {
         // Save the updated events back to the database with 'newEvents' set to false
         eventRepository.saveAll(newEvents);
 
-        // Return the result map of EventDto objects
+        log.info("Retrieved and updated {} new events", result.size());
         return result;
     }
 
-
-    
     @Override
     public Map<Long, EventDto> getDoorActivityById(String doorId) {
+        log.info("Retrieving events for door with ID: {}", doorId);
+
         // Retrieve all events where the door id parameter is equal
         List<Event> newEvents = eventRepository.findByDoorid(doorId);
 
@@ -71,69 +76,104 @@ public class EventServiceImpl implements EventService {
                 (existing, replacement) -> existing         // In case of key collision, keep the first
             ));
 
+        log.info("Found {} events for door ID: {}", result.size(), doorId);
         // Return the result map of EventDto objects
         return result;
     }
 
     @Override
     public Map<Long, EventDto> getHistoryByDay(LocalDate date) {
-        System.out.println("print from getHistoryByDay");
+        log.warn("getHistoryByDay is not implemented yet. Requested date: {}", date);
         // This method is currently unimplemented; should return events by date in the future
         return null;
     }
 
     @Override
     public ResponseDto saveNewEvent(ActivityDto activityDto) { 
-    	eventCounter++;
-		Integer currentCard = activityDto.getCardId();
-		System.out.println("currentCard " + currentCard);
-		CardHolderDto currentClient = clientServiceImpl.getCardHolderByCard(currentCard);
-		System.out.println("currentClient " + currentClient);
-		Door currentDoor = doorRepository.findById(activityDto.getDoorId())
-				.orElseThrow(() -> new DoorNotFoundExeption());
-		System.out.println("currentdoor " + currentDoor);
-		HashSet<String> permissions = currentClient.getPermissions();		
-		LocalDate expiredDate = currentClient.getCards().get(currentCard);
-		boolean accessGranted = LocalDate.now().isBefore(expiredDate)
-				&& permissions.contains(currentDoor.getDescription());
-		System.out.println("Description " + currentDoor.getDescription());
-		System.out.println("expiredDate " + expiredDate);
-		if (accessGranted) {
-			Event newEvent = new Event(eventCounter,activityDto.getDoorId(),currentCard,
-					currentClient.getFirstName() + " " + currentClient.getLastName(),"GRANTED",activityDto.getActionTime(),true);
-			eventRepository.save(newEvent);
-			return new ResponseDto(true, 5, false, 0, false,"GRANTED" );
-		} else {
-			
-			Event newEvent = new Event(eventCounter,activityDto.getDoorId(),currentCard,
-					currentClient.getFirstName() + " " + currentClient.getLastName(),"DENIED",activityDto.getActionTime(),true);
-			eventRepository.save(newEvent);
-			return new ResponseDto(false, 0, false, 0, false,"DENIED" );
-		}
-		
+        long eventId = eventCounter.incrementAndGet();
+        log.info("Saving new event. Generated event ID: {}", eventId);
+
+        Integer currentCard = activityDto.getCardId();
+        log.debug("Card ID received: {}", currentCard);
+
+        CardHolderDto currentClient = clientServiceImpl.getCardHolderByCard(currentCard);
+        log.debug("Card holder found: {} {}", currentClient.getFirstName(), currentClient.getLastName());
+
+        Door currentDoor = doorRepository.findById(activityDto.getDoorId())
+                .orElseThrow(() -> {
+                    log.error("Door not found: {}", activityDto.getDoorId());
+                    return new DoorNotFoundExeption();
+                });
+
+        log.debug("Door found: {}", currentDoor.getDescription());
+
+     // Get permissions assigned to the current cardholder
+        HashSet<String> permissions = currentClient.getPermissions();        
+
+        // Get the expiration date of the card from the cardholder's data
+        LocalDate expiredDate = currentClient.getCards().get(currentCard);
+
+        // Log the expiration date for debugging purposes
+        log.debug("Card expiration date: {}", expiredDate);
+
+        // Determine whether access is granted:
+        // - current date must be before the card's expiration date
+        // - the door's description must be included in the user's permissions
+        boolean accessGranted = LocalDate.now().isBefore(expiredDate)
+                && permissions.contains(currentDoor.getDescription());
+
+        // Log whether access is granted or denied, including the cardholder name and door info
+        log.info("Access {} for card holder {} to door '{}'", 
+                accessGranted ? "GRANTED" : "DENIED",
+                currentClient.getFirstName(), 
+                currentDoor.getDescription());
+
+        // Create a new Event object to record the access attempt
+        Event newEvent = new Event(
+            eventId,
+            activityDto.getDoorId(),
+            currentCard,
+            currentClient.getFirstName() + " " + currentClient.getLastName(),
+            accessGranted ? "GRANTED" : "DENIED",
+            activityDto.getActionTime(),
+            true // Mark event as new
+        );
+
+        // Save the new event in the database
+        eventRepository.save(newEvent);
+
+        // Log the saved event for audit purposes
+        log.info("Event saved: {}", newEvent);
+
+        // Return a response to indicate the result of the access attempt
+        return new ResponseDto(
+            accessGranted,                // Whether access was granted
+            accessGranted ? 5 : 0,        // Sample parameter (e.g. access level or delay)
+            false,                        // Additional status flag (unused here)
+            0,                            // Additional numeric info (unused here)
+            false,                        // Additional status flag (unused here)
+            accessGranted ? "GRANTED" : "DENIED" // Result message
+        );
     }
 
+    @Override
+    public Map<Long, EventDto> getAllEvents() {
+        log.info("Retrieving all events");
 
-
-	@Override
-	public Map<Long, EventDto> getAllEvents() {
-		// Retrieve all events where the 'newEvents' flag is true
+        // Retrieve all events
         List<Event> newEvents = eventRepository.findAll();
 
-        // Convert the list of new Event objects into a Map of EventDto,
+        // Convert the list of Event objects into a Map of EventDto,
         Map<Long, EventDto> result = newEvents.stream()
-            .peek(event -> event.setNewEvents(false)) // Mark each event as no longer new
             .collect(Collectors.toMap(
                 Event::getId,                               // Use Event ID as the key
                 event -> modelMapper.map(event, EventDto.class), // Map Event to EventDto
                 (existing, replacement) -> existing         // In case of key collision, keep the first
             ));
 
-        // Save the updated events back to the database with 'newEvents' set to false
-        eventRepository.saveAll(newEvents);
 
+        log.info("Total events retrieved: {}", result.size());
         // Return the result map of EventDto objects
         return result;
     }
-		
 }

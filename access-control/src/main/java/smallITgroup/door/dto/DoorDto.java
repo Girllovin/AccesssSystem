@@ -1,12 +1,10 @@
 package smallITgroup.door.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter // Generates getters for all fields
-@Setter // Generates setters for all fields
+@Data
 @AllArgsConstructor // Generates a constructor with all fields as parameters
 @NoArgsConstructor  // Generates a no-argument constructor
 public class DoorDto {
