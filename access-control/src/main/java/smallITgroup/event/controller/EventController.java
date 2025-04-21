@@ -2,6 +2,7 @@ package smallITgroup.event.controller;
 
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import smallITgroup.event.dto.EventDateDto;
 import smallITgroup.event.dto.ResponseDto;
 import smallITgroup.event.service.EventService;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor // Automatically generates a constructor with final fields
 @RestController // Marks this class as a REST controller
 public class EventController {
