@@ -3,14 +3,12 @@ package smallITgroup.door.service;
 import java.util.HashSet;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import smallITgroup.building.dao.BuildingRepository;
 import smallITgroup.building.dao.exeption.BuildingNotFoundExeption;
 import smallITgroup.building.model.Building;
-import smallITgroup.client.dao.exeptions.CardHolderNotFoundExeption;
 import smallITgroup.door.dao.DoorRepository;
 import smallITgroup.door.dao.exeption.DoorNotFoundExeption;
 import smallITgroup.door.dto.DoorDto;
@@ -59,5 +57,11 @@ public class DoorServiceImpl implements DoorService {
 		Door door = doorRepository.findById(doorId).orElseThrow(() -> new DoorNotFoundExeption());
 		doorRepository.delete(door);
 		return modelMapper.map(door, DoorDto.class);	
+	}
+
+	@Override
+	public DoorDto activateDoor(DoorDto doorDto) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

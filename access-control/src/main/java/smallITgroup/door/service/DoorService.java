@@ -8,6 +8,6 @@ public interface DoorService {
 	// Returns true if the operation was successful
 	Boolean createDoor(Integer buildingId, DoorDto doorDto);
 	DoorDto removeDoor (String doorId);
-
+	DoorDto activateDoor (DoorDto doorDto);
 
 }

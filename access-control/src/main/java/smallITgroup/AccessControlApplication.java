@@ -2,12 +2,14 @@ package smallITgroup;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 // The @SpringBootApplication annotation is a convenience annotation that combines:
 // - @Configuration: Marks the class as a source of bean definitions for the application context.
 // - @EnableAutoConfiguration: Enables Spring Boot's auto-configuration feature.
 // - @ComponentScan: Tells Spring to scan the current package and its sub-packages for components (e.g., controllers, services).
 @SpringBootApplication
+@EnableAsync
 public class AccessControlApplication {
 
     // The main method is the entry point for the Spring Boot application.

@@ -23,6 +23,7 @@ import smallITgroup.door.model.Door;
 import smallITgroup.event.dao.EventRepository;
 import smallITgroup.event.dto.ResponseDto;
 import smallITgroup.event.model.Event;
+import smallITgroup.utills.OpenDoorService;
 
 @Service // Marks this class as a service to be managed by Spring
 @RequiredArgsConstructor // Generates a constructor with required (final) fields
@@ -34,6 +35,8 @@ public class EventServiceImpl implements EventService {
     final DoorRepository doorRepository;      // Repository for accessing door data
     final ModelMapper modelMapper;            // ModelMapper to convert between Event and EventDto
     final ClientServiceImpl clientServiceImpl;// ClientService for operations with card holders 
+    final OpenDoorService openDoorService;
+
     private static final AtomicLong eventCounter = new AtomicLong(0); // Atomic counter for generating unique event IDs
 
 
@@ -146,7 +149,7 @@ public class EventServiceImpl implements EventService {
         log.info("Event saved: {}", newEvent);
 
         // Return a response to indicate the result of the access attempt
-        return new ResponseDto(
+        ResponseDto resultResponse = new ResponseDto(
             accessGranted,                // Whether access was granted
             accessGranted ? 5 : 0,        // Sample parameter (e.g. access level or delay)
             false,                        // Additional status flag (unused here)
@@ -154,6 +157,10 @@ public class EventServiceImpl implements EventService {
             false,                        // Additional status flag (unused here)
             accessGranted ? "GRANTED" : "DENIED" // Result message
         );
+        if (accessGranted) {
+        	openDoorService.openDoorTemporarily(activityDto.getDoorId(), resultResponse.getOpenDelay());
+        }
+        return resultResponse;
     }
 
     @Override
