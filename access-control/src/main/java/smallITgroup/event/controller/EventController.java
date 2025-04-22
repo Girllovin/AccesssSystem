@@ -25,21 +25,21 @@ public class EventController {
 
 	// Endpoint to get all new activities related to doors
 	@GetMapping("/door/activity")
-	public Map<Long, EventDto> getNewActivity() {
+	public Map<String, EventDto> getNewActivity() {
 		// Fetches all new events from the service
 		return eventService.getNewEvents();
 	}
 	
 	// Endpoint to get activities for a specific door by its ID
 	@GetMapping("/door/{doorId}/activity") 
-	public Map<Long, EventDto> getDoorActivityById(@PathVariable String doorId) {
+	public Map<String, EventDto> getDoorActivityById(@PathVariable String doorId) {
 		// Fetches events for the door identified by doorId
 		return eventService.getDoorActivityById(doorId);
 	}
    
 	// Endpoint to get the history of events for a specific day
 	@GetMapping("/door/history")
-	public Map<Long, EventDto> getHistoryByDay(@RequestBody EventDateDto eventDateDto) {
+	public Map<String, EventDto> getHistoryByDay(@RequestBody EventDateDto eventDateDto) {
 		// Fetches historical events for the given date
 		return eventService.getHistoryByDay(eventDateDto.getDate());
 	}
@@ -54,7 +54,7 @@ public class EventController {
 	
 	// Endpoint to get all new activities related to doors
 		@GetMapping("/door/activity/all")
-		public Map<Long, EventDto> getAllActivity() {
+		public Map<String, EventDto> getAllActivity() {
 			// Fetches all new events from the service
 			return eventService.getAllEvents();
 		}

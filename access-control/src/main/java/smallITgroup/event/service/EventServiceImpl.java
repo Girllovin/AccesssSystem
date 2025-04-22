@@ -37,17 +37,15 @@ public class EventServiceImpl implements EventService {
     final ClientServiceImpl clientServiceImpl;// ClientService for operations with card holders 
     final OpenDoorService openDoorService;
 
-    private static final AtomicLong eventCounter = new AtomicLong(0); // Atomic counter for generating unique event IDs
-
 
     @Override
-    public Map<Long, EventDto> getNewEvents() {
+    public Map<String, EventDto> getNewEvents() {
         log.info("Retrieving new events with flag 'newEvents=true'");
         List<Event> newEvents = eventRepository.findByNewEventsTrue();
 
         // Convert the list of new Event objects into a Map of EventDto,
         // while setting the 'newEvents' flag to false for each one
-        Map<Long, EventDto> result = newEvents.stream()
+        Map<String, EventDto> result = newEvents.stream()
             .peek(event -> event.setNewEvents(false)) // Mark each event as no longer new
             .collect(Collectors.toMap(
                 Event::getId,                               // Use Event ID as the key
@@ -63,7 +61,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Map<Long, EventDto> getDoorActivityById(String doorId) {
+    public Map<String, EventDto> getDoorActivityById(String doorId) {
         log.info("Retrieving events for door with ID: {}", doorId);
 
         // Retrieve all events where the door id parameter is equal
@@ -71,7 +69,7 @@ public class EventServiceImpl implements EventService {
 
         // Convert the list of Event objects at this door into a Map of EventDto,
         // while setting the 'newEvents' flag to false for each one
-        Map<Long, EventDto> result = newEvents.stream()
+        Map<String, EventDto> result = newEvents.stream()
             .peek(event -> event.setNewEvents(false)) // Mark each event as no longer new
             .collect(Collectors.toMap(
                 Event::getId,                               // Use Event ID as the key
@@ -85,7 +83,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Map<Long, EventDto> getHistoryByDay(LocalDate date) {
+    public Map<String, EventDto> getHistoryByDay(LocalDate date) {
         log.warn("getHistoryByDay is not implemented yet. Requested date: {}", date);
         // This method is currently unimplemented; should return events by date in the future
         return null;
@@ -93,8 +91,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public ResponseDto saveNewEvent(ActivityDto activityDto) { 
-        long eventId = eventCounter.incrementAndGet();
-        log.info("Saving new event. Generated event ID: {}", eventId);
+     
+        log.info("Saving new event.");
 
         Integer currentCard = activityDto.getCardId();
         log.debug("Card ID received: {}", currentCard);
@@ -133,7 +131,7 @@ public class EventServiceImpl implements EventService {
 
         // Create a new Event object to record the access attempt
         Event newEvent = new Event(
-            eventId,
+        	null,
             activityDto.getDoorId(),
             currentCard,
             currentClient.getFirstName() + " " + currentClient.getLastName(),
@@ -164,19 +162,18 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Map<Long, EventDto> getAllEvents() {
+    public Map<String, EventDto> getAllEvents() {
         log.info("Retrieving all events");
 
         // Retrieve all events
         List<Event> newEvents = eventRepository.findAll();
 
         // Convert the list of Event objects into a Map of EventDto,
-        Map<Long, EventDto> result = newEvents.stream()
+        Map<String, EventDto> result = newEvents.stream()
             .collect(Collectors.toMap(
                 Event::getId,                               // Use Event ID as the key
-                event -> modelMapper.map(event, EventDto.class), // Map Event to EventDto
-                (existing, replacement) -> existing         // In case of key collision, keep the first
-            ));
+                event -> modelMapper.map(event, EventDto.class)) // Map Event to EventDto
+             );
 
 
         log.info("Total events retrieved: {}", result.size());

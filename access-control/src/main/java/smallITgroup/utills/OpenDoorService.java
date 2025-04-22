@@ -27,8 +27,8 @@ public class OpenDoorService {
                     .orElseThrow(() -> new DoorNotFoundExeption());
 
             // Change door state
-            door.setIsOpen(!door.getIsOpen());
-            door.setIsActive(!door.getIsActive());
+            door.setIsOpen(true);
+            door.setIsActive(false);
             doorRepository.save(door);
             log.info("Door {} state changed to: open={}, active={}", doorId, door.getIsOpen(), door.getIsActive());
 
@@ -37,8 +37,8 @@ public class OpenDoorService {
            
 
             // Revert door state
-            door.setIsOpen(!door.getIsOpen());
-            door.setIsActive(!door.getIsActive());
+            door.setIsOpen(false);
+            door.setIsActive(true);
             doorRepository.save(door);
             log.info("Door {} state reverted to: open={}, active={}", doorId, door.getIsOpen(), door.getIsActive());
 

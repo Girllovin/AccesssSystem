@@ -16,7 +16,7 @@ import lombok.Setter;
 public class Event {
 
 	@Id
-	Long id;                    // Unique identifier for the event (used by MongoDB)
+	String id;                    // Unique identifier for the event (used by MongoDB)
 	String doorid;              // The ID of the door where the event occurred
 	Integer cardId;             // The ID of the card used during the event
 	String cardHolderName;      // The name of the cardholder associated with the event
