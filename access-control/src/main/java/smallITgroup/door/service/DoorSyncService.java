@@ -29,7 +29,5 @@ public class DoorSyncService {
         building.setDoors(new HashSet<>(allDoors));
 
         buildingRepository.save(building);
-
-        System.out.println("Synchronisation well done");
     }
 }
