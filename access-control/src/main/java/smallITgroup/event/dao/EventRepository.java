@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 // This interface extends MongoRepository to provide CRUD operations for the Event entity
 // MongoRepository is a Spring Data interface that simplifies interactions with MongoDB
-public interface EventRepository extends MongoRepository<Event, Long> {
+public interface EventRepository extends MongoRepository<Event, String> {
 
     // In this case, EventRepository will automatically have all the methods of MongoRepository,
     // such as save(), findAll(), findById(), delete(), etc. for the Event entity.
