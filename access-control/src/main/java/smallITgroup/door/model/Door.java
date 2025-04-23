@@ -9,7 +9,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString
 @Getter // Generates getters for all fields
 @Setter // Generates setters for all fields
 @AllArgsConstructor // Generates a constructor with all fields
