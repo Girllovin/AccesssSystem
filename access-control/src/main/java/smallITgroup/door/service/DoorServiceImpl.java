@@ -62,7 +62,7 @@ public class DoorServiceImpl implements DoorService {
 	@Override
 	public DoorDto activateDoor(DoorDto doorDto) {
 		Door door = doorRepository.findById(doorDto.getDoorId()).orElseThrow(() -> new DoorNotFoundExeption());
-		door = modelMapper.map(doorDto, door.getClass());
+		door = modelMapper.map(doorDto, Door.class);
 		return modelMapper.map(door, DoorDto.class);
 	}
 }
