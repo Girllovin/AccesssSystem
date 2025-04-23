@@ -20,7 +20,7 @@ public class DoorServiceImpl implements DoorService {
 	
 	final DoorRepository doorRepository; // Door repository for saving and retrieving door data
 	final BuildingRepository buildingRepository; // Building repository for accessing building data
-  final ModelMapper modelMapper;
+    final ModelMapper modelMapper;
   
 	@Override
 	public Boolean createDoor(Integer buildingId, DoorDto doorDto) {
@@ -61,7 +61,8 @@ public class DoorServiceImpl implements DoorService {
 
 	@Override
 	public DoorDto activateDoor(DoorDto doorDto) {
-		// TODO Auto-generated method stub
-		return null;
+		Door door = doorRepository.findById(doorDto.getDoorId()).orElseThrow(() -> new DoorNotFoundExeption());
+		door = modelMapper.map(doorDto, door.getClass());
+		return modelMapper.map(door, DoorDto.class);
 	}
 }

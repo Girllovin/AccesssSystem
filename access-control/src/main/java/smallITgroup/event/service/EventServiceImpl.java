@@ -1,6 +1,7 @@
 package smallITgroup.event.service;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -178,6 +179,7 @@ public class EventServiceImpl implements EventService {
 
         log.info("Total events retrieved: {}", result.size());
         // Return the result map of EventDto objects
+       
         return result;
     }
 }
