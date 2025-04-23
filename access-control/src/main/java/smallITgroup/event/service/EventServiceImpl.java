@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -171,9 +172,15 @@ public class EventServiceImpl implements EventService {
 
         // Convert the list of Event objects into a Map of EventDto,
         Map<String, EventDto> result = newEvents.stream()
+        	.map(event -> {
+        		Door door = doorRepository.findById(event.getDoorid()).orElseThrow();
+        		event.setDoorid(door.getDescription());
+        		return event;     		
+        	})	
             .collect(Collectors.toMap(
                 Event::getId,                               // Use Event ID as the key
                 event -> modelMapper.map(event, EventDto.class)) // Map Event to EventDto
+            		
              );
 
 
