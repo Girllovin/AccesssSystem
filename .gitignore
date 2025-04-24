@@ -20,4 +20,4 @@ access-control/logs/application.log
 
 *.log
 
-*.gz
+access-control/logs/application.log.2025-04-23.0.gz
