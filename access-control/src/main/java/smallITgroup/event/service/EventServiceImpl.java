@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -167,26 +168,36 @@ public class EventServiceImpl implements EventService {
     public Map<String, EventDto> getAllEvents() {
         log.info("Retrieving all events");
 
-        // Retrieve all events
-        List<Event> newEvents = eventRepository.findAll();
+        // Fetch all events from the database
+        List<Event> allEvents = eventRepository.findAll();
 
-        // Convert the list of Event objects into a Map of EventDto,
-        Map<String, EventDto> result = newEvents.stream()
-        	.map(event -> {
-        		Door door = doorRepository.findById(event.getDoorid()).orElseThrow();
-        		event.setDoorid(door.getDescription());
-        		return event;     		
-        	})	
+        // Collect unique door IDs used in events
+        Set<String> doorIds = allEvents.stream()
+            .map(Event::getDoorid)
+            .collect(Collectors.toSet());
+
+        // Fetch all doors in one batch to avoid repeated DB calls
+        Map<String, String> doorIdToDescriptionMap = doorRepository.findAllById(doorIds).stream()
             .collect(Collectors.toMap(
-                Event::getId,                               // Use Event ID as the key
-                event -> modelMapper.map(event, EventDto.class)) // Map Event to EventDto
-            		
-             );
+                Door::getDoorId,
+                Door::getDescription
+            ));
 
+        // Replace doorId with its description in each event and convert to DTO
+        Map<String, EventDto> result = allEvents.stream()
+            .peek(event -> {
+                String description = doorIdToDescriptionMap.get(event.getDoorid());
+                if (description != null) {
+                    event.setDoorid(description);
+                }
+            })
+            .collect(Collectors.toMap(
+                Event::getId,
+                event -> modelMapper.map(event, EventDto.class)
+            ));
 
-        log.info("Total events retrieved: {}", result.size());
-        // Return the result map of EventDto objects
-       
+        log.info("Total events retrieved and processed: {}", result.size());
         return result;
     }
+
 }
