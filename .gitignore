@@ -19,3 +19,5 @@ buildNumber.properties
 access-control/logs/application.log
 
 *.log
+
+*.gz
