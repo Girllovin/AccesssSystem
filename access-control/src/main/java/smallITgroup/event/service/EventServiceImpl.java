@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -166,7 +169,8 @@ public class EventServiceImpl implements EventService {
         log.info("Retrieving all events");
 
         // Fetch all events from the database
-        List<Event> allEvents = eventRepository.findAll();
+        PageRequest pageRequest = PageRequest.of(0, 50, Sort.by("actionTime").descending());
+        Page<Event> allEvents = eventRepository.findAll(pageRequest);
 
         // Collect unique door IDs used in events
         Set<String> doorIds = allEvents.stream()
